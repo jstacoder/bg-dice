@@ -1,4 +1,4 @@
-const checkStrait = dice =>{
+export const checkStrait = dice =>{
   if(dice.length<6){
     return false
   }
@@ -10,7 +10,7 @@ const checkStrait = dice =>{
   return true
 }
 
-export default scoreStrait = dice =>{
+export const scoreStrait = dice =>{
   if(checkStrait(dice)){
     return 1000
   }
