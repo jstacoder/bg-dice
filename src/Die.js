@@ -6,6 +6,7 @@ export default class Die extends Component{
         this.style = {
             border: '1px solid black',
             width: 15,
+            cursor: 'pointer',
         }
     }
     render(){
