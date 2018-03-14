@@ -10,8 +10,8 @@ const arrayHasHowMany = (array, num) =>{
 
 
 const getArrayCounts = array =>(
-  array.map((itm, idx)=>(
-    (idx+1, arrayHasHowMany(array, idx+1))
+  [1,2,3,4,5,6].map((itm, idx)=>(
+    (itm, arrayHasHowMany(array, itm))
   ))
 )
 

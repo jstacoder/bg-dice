@@ -16,9 +16,16 @@ export default class Board extends Component{
     pass = () =>{
         this.props.events.endTurn()
     }
+    getScore = player =>{
+        return this.props.G.scores[player].score
+    }
     render(){
         return (
             <div>
+                <p>current player is player#{this.props.ctx.currentPlayer} score: {this.getScore(this.props.ctx.currentPlayer)}</p>
+                {this.props.G.scores.map((o,i)=>{
+                    return <p key={i}>{o.score} {o.temp}</p>
+                })}
                 <button onClick={()=>this.roll()}>roll</button>
                 <button onClick={()=>this.pass()}>Pass</button>
                 {this.props && this.props.G && this.props.G.dice &&
