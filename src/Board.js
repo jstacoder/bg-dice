@@ -22,7 +22,13 @@ export default class Board extends Component{
     render(){
         return (
             <div>
-                <p>current player is player#{this.props.ctx.currentPlayer} score: {this.getScore(this.props.ctx.currentPlayer)}</p>
+                <p>current player is 
+                        <span>player#
+                            <span className="player">
+                                { this.props.ctx.currentPlayer }
+                            </span>
+                        </span> score:  { this.getScore(this.props.ctx.currentPlayer) }
+                </p>
                 {this.props.G.scores.map((o,i)=>{
                     return <p key={i}>{o.score} {o.temp}</p>
                 })}

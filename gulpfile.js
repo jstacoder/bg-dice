@@ -7,8 +7,9 @@ var watchify = require('watchify');
 var babel = require('babelify');
 var run = require('tape-run')
 var tapSpec = require('tap-spec')
+var summarize = require('tap-summary')
 
-function compile(watch) {
+function compile(watch, reporter) {
 	  var bundler = watchify(
 			browserify(
 				'./src/tests.js', 
@@ -23,7 +24,7 @@ function compile(watch) {
 				this.emit('end'); 
 			})
 			.pipe(run())
-			.pipe(tapSpec())
+			.pipe(reporter())
 		  .pipe(process.stdout)
 		)
 
@@ -37,11 +38,14 @@ function compile(watch) {
 	  rebundle();
 }
 
-function watch() {
-	  return compile(true);
+function watch(reporter) {
+	  return compile(true, reporter);
 };
 
-gulp.task('build', function() { return compile(); });
-gulp.task('watch', function() { return watch(); });
+gulp.task('build', function() { return compile(false, tapSpec); });
+gulp.task('watch', function() { return watch(tapSpec); });
+
+gulp.task('build-summary', function() { return compile(false, summarize); });
+gulp.task('watch-summary', function() { return watch(summarize); });
 
 gulp.task('default', ['watch']);
