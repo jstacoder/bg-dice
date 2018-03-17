@@ -5,8 +5,10 @@ export default class Die extends Component{
         super(...props)
         this.style = {
             border: '1px solid black',
-            width: 15,
+            maxWidth: 15,
             cursor: 'pointer',
+            flex: 1,
+            alignSelf: 'center',
         }
     }
     render(){

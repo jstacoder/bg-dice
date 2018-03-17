@@ -15,12 +15,13 @@ export default test('doubles',function(t){
 			}
 		})
 		t.test('test scoring is correct when given doubles',t=>{
-			t.plan(4)
+			t.plan(5)
 			for(let i = 1; i < 5; i++){
 				const roll = loadDoublesRoll(i)
 				const result = scoreDoubles(roll)
 			  t.equals(result, 1000, `${roll} should get 1000`)		
 			}
+			t.equals(scoreDoubles([2,6,3,3,6,2]), 1000, 'this should work 2,6,3,3,6,2')
 		})
 	})
 	t.test('test bad', t=>{
