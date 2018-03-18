@@ -16,9 +16,10 @@ export const holdDieUpdate = (G, ctx, die) =>{
   let heldScore = {...turnScores.heldScore}
   let {held, score} = heldScore
   let scores = [...turnScores.scores.filter(score=> score.held != held)]
-  heldScore = { held: [...held, die], score: scoreRoll([...held, die]) }
+  const newHeld = [...held, die]
+  const newScore = scoreRoll(newHeld)
+  heldScore = { held: newHeld, score: newScore }
   turnScores = {rollScore: heldScore, heldScore, scores: [...scores]}
-  // return {...G, turnScores: {...turnScores}}
   return turnScores
 }
 
@@ -28,4 +29,37 @@ export const keepScoreUpdate = (G, ctx) =>{
   const newScore = G.turnScores.scores.reduce((prev, curr)=> prev + curr.score, currentScore)
   scores[ctx.currentPlayer] = newScore
   return {...G, scores: [...scores], turnScores: resetTurnScore() }
+}
+
+export const saveScore =  (G, ctx, score)=>({
+  ...G,
+  diceHeldThisRoll:[],
+  heldThisPhase: false,
+  players: {
+    ...G.players,
+    [ctx.currentPlayer]: G.players[ctx.currentPlayer]+score
+  }
+})
+
+export const loadPlayers = numPlayers =>{
+  let players = {}
+  for(let i = 0; i < numPlayers; i++){
+    players[`${i}`] = 0
+  }
+  return players
+}
+
+export const resetG = (G, {numPlayers}) =>{
+
+  return {
+    canHold: [],
+    turnStats: resetTurnStats(),
+    turnScores: resetTurnScore(),
+    diceHeldThisRoll: [],
+    holding: [],
+    pass: false,
+    dice: Array(6).fill(0),
+    heldThisPhase: false,
+    players:loadPlayers(numPlayers)
+  }
 }
