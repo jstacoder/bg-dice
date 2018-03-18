@@ -15,16 +15,18 @@ export default class Die extends Component{
             flex: 1,
             alignSelf: 'center',
             marginRight: 15,
+            marginTop: 15,
             
         }
     }
     render(){
         return (
-            <p
+            <div 
+                className="panel panel-default"
                 style={this.style}
                 onClick={this.props.onClick}>
                     {this.props.die}
-            </p>
+            </div>
         )
     }
 }
