@@ -1,5 +1,19 @@
 import { scoreRoll } from './scoring/score-roll'
 
+export const endGameIf = (G, ctx)=> {
+    if(
+        G.finalRound&&
+        Object.keys(G.players).length-1==
+        ctx.currentPlayer
+    ){
+        return Object.keys(G.players).reduce((prev,curr)=>
+        {
+            const c = G.players[curr]
+            return c > G.players[prev] ? curr : prev
+        },0)
+    }
+}
+
 export const resetTurnStats = ({rolls=0, holds=0}={}) =>({
     rolls,
     holds,
