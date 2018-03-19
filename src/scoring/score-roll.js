@@ -26,21 +26,17 @@ export const pickDiceToHold = roll =>{
       }
     }
   }
-  console.log(newRoll)
   if(newRoll.length){
     const singles = [1,5]
     singles.forEach(n=> {
         rtn = rtn.concat([...processSingle(n, newRoll)])
       }
     )
-  }
-  console.log('HOLDING: ', rtn)
   return rtn
 }
 
 export const scoreRoll = roll =>{
   let rtn = 0
-  // pickDiceToHold(roll)
   const highScoreFuncs = [scoreStrait, scoreDoubles]
   highScoreFuncs.forEach(func=>{
     const result =  func(roll)
