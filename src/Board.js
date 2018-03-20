@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 
 import Die from './Die'
+import { getHighestScore } from './utils';
+import { Container, Row, Column } from './boot-strap'
+
 
 const Button = props => <button className="btn btn-default" {...props} />
 
@@ -26,7 +29,7 @@ export default class Board extends Component{
         }, 1200)
     }
     hold = die =>{
-        if(this.props.G.canHold.indexOf(die)>-1){
+        if((this.props.G.canHold||[]).indexOf(die)> -1){
             this.props.moves.hold(die)
         }
     }
@@ -47,6 +50,12 @@ export default class Board extends Component{
     getScore = player =>{
         return this.props.G.players && this.props.G.players[player]+this.getTempScore()||0
     }
+    undo = () =>{
+        this.props.events.undo()
+    }
+    redo = () =>{
+        this.props.events.redo()
+    }
     canRoll = () =>{
         return !this.props.G.heldThisPhase || this.props.G.canHold.length > 0
     }
@@ -59,8 +68,13 @@ export default class Board extends Component{
         return die1 === die2
     }
     render(){
+        console.log("BOARD PROPS:", this.props)
         return (
+            <Container>
+                <Row>
+                    <Column xs={12} md={6}>
             <div style={{padding: 50}}>
+                {this.props.G.finalRound && <h2>final round</h2>||<p>{(this.props.G.highestScore*1)+1}</p>}
                 <p className="lead">
                     current player is {' '}
                         <span className="small">player#{' '}
@@ -72,19 +86,33 @@ export default class Board extends Component{
                 <p>
                     running score:  { this.getScore(this.props.ctx.currentPlayer) }
                 </p>
+                <Row>
+                    <Column xs={6}>
+                        <Button onClick={this.undo}>undo</Button>
+                    </Column>
+                    <Column xs={6}>
+                        <Button onClick={this.redo}>redo</Button>
+                    </Column>
+                </Row>
                 {Object.keys(this.props.G.players||{}).map((o,i)=>{
                     return <p key={i}>Player# {i+1}: {this.props.G.players[i]}</p>
                 })}
+                <Row>
+                {((((this.props.G.canHold||[]).length == 0) && this.props.G.dice[0]!==0) && !this.rolledDoubles()&& !this.state.rolling) && 
+                (<Column xs={6} md={4}>
+                <Button className="btn btn-lg" onClick={()=>this.pass()}>end turn</Button> </Column>)|| 
+                    (<Column xs={6} md={2}><Button className="btn btn-lg" disabled={this.state.rolling} onClick={()=>this.roll()}>roll</Button>
+                    </Column>)
+                }
                 {(this.getScore(this.props.ctx.currentPlayer)>=1000 && this.props.G.dice.length>0 && this.props.G.heldThisPhase && !this.state.rolling)&&
+                <Column xs={6} md={6}>
                     <Button 
+                        className="btn btn-lg"
                         disabled={this.props.G.canHold.length==0} 
                         onClick={()=>this.pass()}>
                         Keep Score
-                    </Button> || null}
-                {(((this.props.G.canHold.length == 0) && this.props.G.dice[0]!==0) && !this.rolledDoubles()&& !this.state.rolling) && 
-                    <Button onClick={()=>this.pass()}>end turn</Button> || 
-                    <Button disabled={this.state.rolling} onClick={()=>this.roll()}>roll</Button>
-                }
+                    </Button></Column> || null}
+                </Row>
                 <div style={{flex: 1, flexDirection: 'row', maxWidth: 500, textAlign: 'center',justifyContent: 'flex-start',display: 'flex'}}>
                 {this.props && this.props.G && this.props.G.dice &&
                     this.props.G.dice.map((die, idx)=>(
@@ -93,6 +121,9 @@ export default class Board extends Component{
                 }
                 </div>
             </div>
+            </Column>
+            </Row>
+            </Container>
         )
     }
 }

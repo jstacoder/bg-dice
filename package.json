@@ -2,6 +2,7 @@
   "name": "dice",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://jstacoder.github.io/bg-dice",
   "dependencies": {
     "babel": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
@@ -9,8 +10,9 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-tape-runner": "^2.0.1",
     "babelify": "^8.0.0",
-    "boardgame.io": "^0.20.2",
+    "boardgame.io": "^0.21.0",
     "browserfy": "^1.0.0",
+    "classnames": "^2.2.5",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "gulp": "^3.9.1",

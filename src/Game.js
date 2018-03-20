@@ -6,15 +6,21 @@ import {
   resetTurnStats, keepScoreUpdate, 
   holdDieUpdate, resetTurnScore,
   saveScore,loadPlayers, resetG,
+  endGameIf, getHighestScore,
 } from './utils'
 
 
 const game = Game({
   setup: numPlayers=> resetG({}, numPlayers),
   flow: {
+    // undo: true,
+    undoableMoves:['hold'],
+    endGameIf,
     onTurnEnd: (G, ctx)=>{
       return {
         ...G,
+        highestScore: getHighestScore(G, ctx),
+        finalRound:G.finalRound||G.players[ctx.currentPlayer]>=10000,
         turnScores: {...resetTurnScore()},
         dice: Array(6).fill(0),
         holding: [],
@@ -27,9 +33,10 @@ const game = Game({
       {
         name: "rolling",
         allowedMoves:["roll", "saveScore"],
+        onPhaseEnd:(G, ctx)=>({...G, canHold: pickDiceToHold(G.dice)}),
         onMove: (G, ctx, {payload: { type }})=>{
           console.log(type)
-          if(type=='roll'&&G.turnStats.rolls>1){
+          if(type=='roll'&&G.turnStats.rolls>1&&G.turnScores.heldScore>0){
             return {
               ...G, 
               turnScores: {
@@ -49,10 +56,11 @@ const game = Game({
               }, 
               diceHeldThisRoll: [], 
               holding: [],
+              highestScore: getHighestScore(G, ctx),
               canHold: pickDiceToHold(G.dice),
             }
           }
-          return {...G, canHold: pickDiceToHold(G.dice)}
+          return {...G, canHold: pickDiceToHold(G.dice), highestScore: getHighestScore(G, ctx), }
         },
        // onTurnEnd:(G, ctx)=>({...G, diceHeldThisRoll: []})
       },
@@ -69,6 +77,7 @@ const game = Game({
       ...G,
       turnStats: resetTurnStats({holds: G.turnStats.holds, rolls: G.turnStats.rolls+1}),
       dice: ctx.random.D6(G.dice.length || 6),
+      highestScore: getHighestScore(G, ctx),
     }),
     hold: (G, ctx, ...dies)=>{
       const heldThisRoll = G.turnStats.holds === G.turnStats.rolls
@@ -82,6 +91,7 @@ const game = Game({
       })
     return {
         ...G,
+        highestScore: getHighestScore(G, ctx),
         dice: [...dice],
         holding: [...holding],
         heldThisPhase: true,

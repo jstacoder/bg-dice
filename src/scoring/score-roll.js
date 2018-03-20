@@ -32,6 +32,7 @@ export const pickDiceToHold = roll =>{
         rtn = rtn.concat([...processSingle(n, newRoll)])
       }
     )
+}
   return rtn
 }
 
