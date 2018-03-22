@@ -68,13 +68,13 @@ export default class Board extends Component{
         return die1 === die2
     }
     render(){
-        console.log("BOARD PROPS:", this.props)
         return (
-            <Container>
-                <Row>
                     <Column xs={12} md={6}>
+        {this.props.ctx.gameover && (
+                <div>winner player: {(this.props.ctx.gameover*1)+1}</div>
+        ) || (
             <div style={{padding: 50}}>
-                {this.props.G.finalRound && <h2>final round</h2>||<p>{(this.props.G.highestScore*1)+1}</p>}
+                {this.props.G.finalRound && <div ><h2>final round</h2><p>{(this.props.G.finalRoundPlayer*1)+1} is winning</p></div>||<p>{(this.props.G.highestScore*1)+1}</p> }
                 <p className="lead">
                     current player is {' '}
                         <span className="small">player#{' '}
@@ -120,10 +120,8 @@ export default class Board extends Component{
                     ))
                 }
                 </div>
-            </div>
+            </div>)}
             </Column>
-            </Row>
-            </Container>
         )
     }
 }

@@ -17,10 +17,20 @@ const game = Game({
     undoableMoves:['hold'],
     endGameIf,
     onTurnEnd: (G, ctx)=>{
+      let initialFinalRound = false, finalRoundScore = G.finalRoundScore, finalRoundPlayer = G.finalRoundPlayer
+      const finalRound = G.finalRound||G.players[ctx.currentPlayer]>=3000
+      if(finalRound&&!G.finalRound){
+        initialFinalRound = true
+        finalRoundScore = G.players[ctx.currentPlayer]
+        finalRoundPlayer = ctx.currentPlayer
+      }
       return {
         ...G,
         highestScore: getHighestScore(G, ctx),
-        finalRound:G.finalRound||G.players[ctx.currentPlayer]>=10000,
+        finalRound,
+        finalRoundScore,
+        finalRoundPlayer,
+        initialFinalRound,
         turnScores: {...resetTurnScore()},
         dice: Array(6).fill(0),
         holding: [],
@@ -36,7 +46,7 @@ const game = Game({
         onPhaseEnd:(G, ctx)=>({...G, canHold: pickDiceToHold(G.dice)}),
         onMove: (G, ctx, {payload: { type }})=>{
           console.log(type)
-          if(type=='roll'&&G.turnStats.rolls>1&&G.turnScores.heldScore>0){
+          if(type=='roll'&&G.turnStats.rolls>1&&G.turnScores.heldScore.score>0){
             return {
               ...G, 
               turnScores: {

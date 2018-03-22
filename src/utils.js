@@ -18,12 +18,13 @@ export const getHighestScore = (G, ctx)=>{
   // )
 }
 
+export const getNextPlayer = (ctx, num) =>{
+  const { currentPlayer, playOrder } = ctx
+  return ((num||currentPlayer)+1) % playOrder.length
+}
+
 export const endGameIf = (G, ctx)=> {
-    if(
-        G.finalRound&&
-        Object.keys(G.players).length-1==
-        ctx.currentPlayer
-    ){
+    if(G.finalRound&& !G.initialFinalRound && G.finalRoundPlayer==getNextPlayer(ctx)){
       return getHighestScore(G, ctx)
     }
 }
