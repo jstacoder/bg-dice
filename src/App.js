@@ -20,10 +20,9 @@ class App extends Component {
     this.setState({numPlayers:players})
   }
   render() {
-    const enhancer = compose(
-      applyMiddleware(logger),
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-    )
+   const enhancer = applyMiddleware(logger)
+      // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() || (()=>{})
+    //)
   
     const GameClient = Client({game, debug: false, board: Board, numPlayers: this.state.numPlayers, enhancer})
     return (
