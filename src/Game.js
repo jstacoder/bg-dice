@@ -16,6 +16,7 @@ const game = Game({
     // undo: true,
     undoableMoves:['hold'],
     endGameIf,
+    onTurnBegin:(G, ctx)=>({...G, ending: false}),
     onTurnEnd: (G, ctx)=>{
       let initialFinalRound = false, finalRoundScore = G.finalRoundScore, finalRoundPlayer = G.finalRoundPlayer
       const finalRound = G.finalRound||G.players[ctx.currentPlayer]>=3000
@@ -42,7 +43,7 @@ const game = Game({
     phases:[
       {
         name: "rolling",
-        allowedMoves:["roll", "saveScore"],
+        allowedMoves:["roll", "saveScore", "setEnding"],
         onPhaseEnd:(G, ctx)=>({...G, canHold: pickDiceToHold(G.dice)}),
         onMove: (G, ctx, {payload: { type }})=>{
           console.log(type)
@@ -77,12 +78,13 @@ const game = Game({
       {
        name: "holding",
        onPhaseEnd: (G, ctx)=>({...G, heldThisPhase: false}),
-       allowedMoves: ["hold", "roll", "saveScore"]
+       allowedMoves: ["hold", "roll", "saveScore", "setEnding"]
       }
     ]
   },
   moves: {
     saveScore,
+    setEnding:(G, ctx)=>({...G, ending: true}),
     roll: (G, ctx)=>({
       ...G,
       turnStats: resetTurnStats({holds: G.turnStats.holds, rolls: G.turnStats.rolls+1}),

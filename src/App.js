@@ -15,6 +15,9 @@ class App extends Component {
   constructor(...props){
     super(...props)
   }
+  reset = () =>{
+    this.setState({numPlayers: 0})
+  }
   setPlayers = players =>{
     console.log('calling setState players', players)
     this.setState({numPlayers:players})
@@ -31,7 +34,7 @@ class App extends Component {
     {this.state.numPlayers===0 && (
         <PickPlayerNum setPlayers={this.setPlayers} /> 
       ) || (
-        <GameClient />
+        <GameClient reset={this.reset} />
     )}
     </Row>
     </Container>

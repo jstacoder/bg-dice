@@ -24,7 +24,7 @@ export const getNextPlayer = (ctx, num) =>{
 }
 
 export const endGameIf = (G, ctx)=> {
-    if(G.finalRound&& !G.initialFinalRound && G.finalRoundPlayer==getNextPlayer(ctx)){
+    if(G.finalRound&& G.ending && G.finalRoundPlayer==getNextPlayer(ctx)){
       return getHighestScore(G, ctx)
     }
 }

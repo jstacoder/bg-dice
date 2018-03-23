@@ -28,6 +28,9 @@ export default class Board extends Component{
             this.setState({rolling: false})
         }, 1200)
     }
+    reset = () =>{
+        this.props.reset()
+    }
     hold = die =>{
         if((this.props.G.canHold||[]).indexOf(die)> -1){
             this.props.moves.hold(die)
@@ -39,6 +42,7 @@ export default class Board extends Component{
             console.log('saving ', tmpScore)
             this.props.moves.saveScore(tmpScore)
         }
+        this.props.moves.setEnding()
         this.props.events.endTurn()
     }
     getHeldScore = () =>{
