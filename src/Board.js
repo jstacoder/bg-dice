@@ -67,11 +67,15 @@ export default class Board extends Component{
         const [die1, die2] = dice
         return die1 === die2
     }
+    reset = () =>{}
     render(){
         return (
-                    <Column xs={12} md={6}>
+                    <Column xs={12} sm={12} md={6}>
         {this.props.ctx.gameover && (
+            <div>
                 <div>winner player: {(this.props.ctx.gameover*1)+1}</div>
+                <button className="btn btn-default" onClick={this.reset}> play again</button>
+            </div>
         ) || (
             <div style={{padding: 50}}>
                 {this.props.G.finalRound && <div ><h2>final round</h2><p>{(this.props.G.finalRoundPlayer*1)+1} is winning</p></div>||<p>{(this.props.G.highestScore*1)+1}</p> }
@@ -100,14 +104,14 @@ export default class Board extends Component{
                 <Row>
                 {((((this.props.G.canHold||[]).length == 0) && this.props.G.dice[0]!==0) && !this.rolledDoubles()&& !this.state.rolling) && 
                 (<Column xs={6} md={4}>
-                <Button className="btn btn-lg" onClick={()=>this.pass()}>end turn</Button> </Column>)|| 
-                    (<Column xs={6} md={2}><Button className="btn btn-lg" disabled={this.state.rolling} onClick={()=>this.roll()}>roll</Button>
+                <Button className="btn btn-default btn-lg" onClick={()=>this.pass()}>end turn</Button> </Column>)|| 
+                    (<Column xs={6} md={2}><Button className="btn btn-default btn-lg" disabled={this.state.rolling} onClick={()=>this.roll()}>roll</Button>
                     </Column>)
                 }
                 {(this.getScore(this.props.ctx.currentPlayer)>=1000 && this.props.G.dice.length>0 && this.props.G.heldThisPhase && !this.state.rolling)&&
                 <Column xs={6} md={6}>
                     <Button 
-                        className="btn btn-lg"
+                        className="btn btn-default btn-lg"
                         disabled={this.props.G.canHold.length==0} 
                         onClick={()=>this.pass()}>
                         Keep Score
