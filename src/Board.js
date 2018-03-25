@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
+import { ListGroup, ListGroupItem, Container, Row, Col as Column, Badge } from 'reactstrap'
 
 import Die from './Die'
 import { getHighestScore } from './utils';
-import { Container, Row, Column } from './boot-strap'
+// import { Container, Row, Column } from './boot-strap'
 
 
 const Button = props => <button className="btn btn-default" {...props} />
@@ -15,12 +16,20 @@ export default class Board extends Component{
         }
     }
     disableRoll = () =>{
+        const { G, ctx, ...rest} = this.props
+        console.log(G)
+        console.log(ctx)
+        console.log(rest)
+
         let disable = false
         if(this.state.rolling){
             disable = true
         }
         else if(!this.props.G.heldThisPhase&&!this.props.G.initialRoll){
             disable = true
+        }
+        if(disable && !this.state.rolling){
+            return !this.rolledDoubles()
         }
         return disable
     }
@@ -85,11 +94,14 @@ export default class Board extends Component{
     render(){
         const disabled = this.disableRoll()
         return (
-                    <Column xs={12} sm={12} md={6}>
+
+          <Container>
+            <Row>
+                    <Column xs={"12"} sm={"12"} md={"6"}>
         {this.props.ctx.gameover && (
             <div>
                 <div>winner player: {(this.props.ctx.gameover*1)+1}</div>
-                <button className="btn btn-default" onClick={this.reset}> play again</button>
+                <button className="btn btn-default" onClick={()=>this.props.reset()}> play again</button>
             </div>
         ) || (
             <div style={{padding: 50}}>
@@ -106,25 +118,27 @@ export default class Board extends Component{
                     running score:  { this.getScore(this.props.ctx.currentPlayer) }
                 </p>
                 <Row>
-                    <Column xs={6}>
+                    <Column xs={"6"}>
                         <Button onClick={this.undo}>undo</Button>
                     </Column>
-                    <Column xs={6}>
+                    <Column xs={"6"}>
                         <Button onClick={this.redo}>redo</Button>
                     </Column>
                 </Row>
+                <ListGroup>
                 {Object.keys(this.props.G.players||{}).map((o,i)=>{
-                    return <p key={i}>Player# {i+1}: {this.props.G.players[i]}</p>
+                    return <ListGroupItem key={i}><p>Player# {i+1}: <Badge pill className="float-right">{this.props.G.players[i]}</Badge></p></ListGroupItem>
                 })}
+                </ListGroup>
                 <Row>
                 {((((this.props.G.canHold||[]).length == 0) && this.props.G.dice[0]!==0) && !this.rolledDoubles()&& !this.state.rolling) && 
-                (<Column xs={6} md={4}>
+                (<Column xs={"6"} md={"4"}>
                 <Button className="btn btn-default btn-lg" onClick={()=>this.pass()}>end turn</Button> </Column>)|| 
-                    (<Column xs={6} md={2}><Button className="btn btn-default btn-lg" disabled={disabled} onClick={()=>this.roll()}>roll</Button>
+                    (<Column xs={"6"} md={"2"}><Button className="btn btn-default btn-lg" disabled={disabled} onClick={()=>this.roll()}>roll</Button>
                     </Column>)
                 }
                 {(this.getScore(this.props.ctx.currentPlayer)>=1000 && this.props.G.dice.length>0 && this.props.G.heldThisPhase && !this.state.rolling)&&
-                <Column xs={6} md={6}>
+                <Column xs={"6"} md={"6"}>
                     <Button 
                         className="btn btn-default btn-lg"
                         disabled={this.props.G.canHold.length==0} 
@@ -135,12 +149,14 @@ export default class Board extends Component{
                 <div style={{flex: 1, flexDirection: 'row', maxWidth: 500, textAlign: 'center',justifyContent: 'flex-start',display: 'flex'}}>
                 {this.props && this.props.G && this.props.G.dice &&
                     this.props.G.dice.map((die, idx)=>(
-                        <Die key={`${idx}${die}`} die={die} ctx={this.props.ctx} G={this.props.G} onClick={()=>this.hold(die)} />
+                        <Die key={`${idx}${die}`} die={die} rolling={this.state.rolling} ctx={this.props.ctx} G={this.props.G} onClick={()=>this.hold(die)} />
                     ))
                 }
                 </div>
             </div>)}
             </Column>
+            </Row>
+            </Container>
         )
     }
 }

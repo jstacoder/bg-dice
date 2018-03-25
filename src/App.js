@@ -29,16 +29,16 @@ class App extends Component {
   
     const GameClient = Client({game, debug: false, board: Board, numPlayers: this.state.numPlayers, enhancer})
     return (
+    this.state.numPlayers===0 && (
           <Container>
             <Row>
-    {this.state.numPlayers===0 && (
         <PickPlayerNum setPlayers={this.setPlayers} /> 
-      ) || (
-        <GameClient reset={this.reset} />
-    )}
     </Row>
     </Container>
-    )}
+      ) || (
+        <GameClient reset={this.reset} />
+    ))
+  }
 }
 
 export default App;
