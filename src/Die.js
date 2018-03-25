@@ -7,7 +7,7 @@ export default class Die extends Component{
         this.state = {
             style : {
                 border: '1px solid black',
-                // minWidth: 45,
+                minWidth: 30,
                 //height: 45,
                 fontSize: 30,
                 textAlign: 'center',
