@@ -42,7 +42,7 @@ const game = Game({
     phases:[
       {
         name: "rolling",
-        allowedMoves:["roll", "saveScore"],
+        allowedMoves:["roll", "saveScore","setEnding"],
         onPhaseEnd:(G, ctx)=>({...G, canHold: pickDiceToHold(G.dice)}),
         onMove: (G, ctx, {payload: { type }})=>{
           console.log(type)
@@ -77,17 +77,19 @@ const game = Game({
       {
        name: "holding",
        onPhaseEnd: (G, ctx)=>({...G, heldThisPhase: false}),
-       allowedMoves: ["hold", "roll", "saveScore"]
+       allowedMoves: ["hold", "roll", "saveScore", "setEnding"]
       }
     ]
   },
   moves: {
     saveScore,
+    setEnding: (G, ctx)=>({...G, initialRoll: true, ending: true}),
     roll: (G, ctx)=>({
       ...G,
       turnStats: resetTurnStats({holds: G.turnStats.holds, rolls: G.turnStats.rolls+1}),
       dice: ctx.random.D6(G.dice.length || 6),
       highestScore: getHighestScore(G, ctx),
+      initialRoll:false,
     }),
     hold: (G, ctx, ...dies)=>{
       const heldThisRoll = G.turnStats.holds === G.turnStats.rolls

@@ -14,6 +14,16 @@ export default class Board extends Component{
             rolling: false
         }
     }
+    disableRoll = () =>{
+        let disable = false
+        if(this.state.rolling){
+            disable = true
+        }
+        else if(!this.props.G.heldThisPhase&&!this.props.G.initialRoll){
+            disable = true
+        }
+        return disable
+    }
     roll = () =>{
         console.log(this.props.G)
         if(this.props.ctx.phase === 'holding'){
@@ -39,6 +49,7 @@ export default class Board extends Component{
             console.log('saving ', tmpScore)
             this.props.moves.saveScore(tmpScore)
         }
+        this.props.moves.setEnding()
         this.props.events.endTurn()
     }
     getHeldScore = () =>{
@@ -69,6 +80,7 @@ export default class Board extends Component{
     }
     reset = () =>{}
     render(){
+        const disabled = this.disableRoll()
         return (
                     <Column xs={12} sm={12} md={6}>
         {this.props.ctx.gameover && (
@@ -105,7 +117,7 @@ export default class Board extends Component{
                 {((((this.props.G.canHold||[]).length == 0) && this.props.G.dice[0]!==0) && !this.rolledDoubles()&& !this.state.rolling) && 
                 (<Column xs={6} md={4}>
                 <Button className="btn btn-default btn-lg" onClick={()=>this.pass()}>end turn</Button> </Column>)|| 
-                    (<Column xs={6} md={2}><Button className="btn btn-default btn-lg" disabled={this.state.rolling} onClick={()=>this.roll()}>roll</Button>
+                    (<Column xs={6} md={2}><Button className="btn btn-default btn-lg" disabled={disabled} onClick={()=>this.roll()}>roll</Button>
                     </Column>)
                 }
                 {(this.getScore(this.props.ctx.currentPlayer)>=1000 && this.props.G.dice.length>0 && this.props.G.heldThisPhase && !this.state.rolling)&&

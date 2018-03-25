@@ -24,7 +24,7 @@ export const getNextPlayer = (ctx, num) =>{
 }
 
 export const endGameIf = (G, ctx)=> {
-    if(G.finalRound&& !G.initialFinalRound && G.finalRoundPlayer==getNextPlayer(ctx)){
+    if(G.finalRound && G.ending && G.finalRoundPlayer==getNextPlayer(ctx)){
       return getHighestScore(G, ctx)
     }
 }
@@ -88,9 +88,11 @@ export const resetG = (G, {numPlayers}) =>{
     turnScores: resetTurnScore(),
     diceHeldThisRoll: [],
     holding: [],
+    ending:false,
     pass: false,
     dice: Array(6).fill(0),
     heldThisPhase: false,
+    initialRoll:true,
     players:loadPlayers(numPlayers)
   }
 }
