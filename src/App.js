@@ -36,7 +36,10 @@ class App extends Component {
     </Row>
     </Container>
       ) || (
+        <div>
         <GameClient reset={this.reset} />
+        <button onClick={()=>this.reset()}>reset</button>
+        </div>
     ))
   }
 }

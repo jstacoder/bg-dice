@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import { Col } from 'reactstrap'
 
 export default class Die extends Component{
     constructor(...props){
@@ -6,8 +7,8 @@ export default class Die extends Component{
         this.state = {
             style : {
                 border: '1px solid black',
-                maxWidth: 45,
-                height: 45,
+                // minWidth: 45,
+                //height: 45,
                 fontSize: 30,
                 textAlign: 'center',
                 alignItems: 'center',
@@ -15,7 +16,7 @@ export default class Die extends Component{
                 cursor: 'pointer',
                 flex: 1,
                 alignSelf: 'center',
-                marginRight: 15,
+                
                 marginTop: 15,
             }
         }
@@ -45,12 +46,14 @@ export default class Die extends Component{
     render(){
        const {  state: { style } } = this
         return (
+             <Col xs={{ size: 2}} md={{ size: 2 }} sm={{size: 2}} lg={{size: 2}}>
             <div 
                 className="panel panel-default rounded"
                 style={style}
                 onClick={this.props.onClick}>
                     {this.props.die}
             </div>
+            </Col>
         )
     }
 }

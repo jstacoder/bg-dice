@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Col, ListGroup, ListGroupItem, Card, CardBody, CardHeader, CardText } from 'reactstrap'
 
 export default class PickPlayerNum extends Component{
   nums = [1,2,3,4,5]
@@ -8,15 +9,20 @@ export default class PickPlayerNum extends Component{
   }
   render(){
     return (
-      <div>
-        <p>pick players</p>
-        <hr />
-        {this.nums.map(num=>{
-          return (
-            <p style={{height: 20, width: 20, border: '1px solid black'}} key={num} onClick={()=>this.onClick(num)}>{num}</p>
-          )
-        })}
-      </div>
+      <Col xs="12" md={{size: 10, offset: 1}} lg={{size: 8, offset: 2}}>
+        <Card>
+          <CardHeader>pick players</CardHeader>
+          <CardBody>
+            <ListGroup>
+            {this.nums.map(num=>{
+             return (
+               <ListGroupItem tag="button" key={num} onClick={()=>this.onClick(num)} action><CardText>{num}</CardText></ListGroupItem>
+             )
+            })}
+            </ListGroup>
+          </CardBody>
+        </Card>
+      </Col>
     )
   }
 }
