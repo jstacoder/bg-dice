@@ -1,7 +1,7 @@
 language: python
 
 install:
-    - npm install
+    - cmd: npm install
 
 script:
-    - gulp build
+    - cmd: gulp build
