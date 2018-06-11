@@ -8,6 +8,9 @@ var babel = require('babelify');
 var run = require('tape-run')
 var tapSpec = require('tap-spec')
 var summarize = require('tap-summary')
+var tape = require('gulp-tape')
+var streamify = require('gulp-streamify')
+
 
 function compile(watch, reporter) {
 	  var bundler = watchify(
@@ -18,12 +21,19 @@ function compile(watch, reporter) {
 		);
 
 	  rebundle = () =>(
-		  bundler.bundle()
-      .on('error', err=>{ 
-				console.error(err); 
-				this.emit('end'); 
-			})
-			.pipe(run())
+          bundler.bundle()
+         // .pipe(source('output.js','./'))
+            //     .on('error', err=>{ 
+			// 	console.error(err); 
+			// 	this.emit('end'); 
+			// })
+    // //    .pipe(buffer())
+    //   .on('error', err=>{ 
+	// 			console.error(err); 
+	// 			this.emit('end'); 
+	// 		})
+            // .pipe(streamify(tape()))
+            .pipe(run())
 			.pipe(reporter())
 		  .pipe(process.stdout)
 		)

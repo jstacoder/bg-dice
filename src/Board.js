@@ -60,7 +60,8 @@ export default class Board extends Component{
     }
     render(){
         return (
-            <div style={{padding: 50}}>
+            <div>
+            <div className="Board" style={{padding: 50}}>
                 <p className="lead">
                     current player is {' '}
                         <span className="small">player#{' '}
@@ -75,23 +76,25 @@ export default class Board extends Component{
                 {Object.keys(this.props.G.players||{}).map((o,i)=>{
                     return <p key={i}>Player# {i+1}: {this.props.G.players[i]}</p>
                 })}
-                {(this.getScore(this.props.ctx.currentPlayer)>=1000 && this.props.G.dice.length>0 && this.props.G.heldThisPhase && !this.state.rolling)&&
+                {(this.getScore(this.props.ctx.currentPlayer)>=1000 && (this.props.G.dice||[]).length>0 && this.props.G.heldThisPhase && !this.state.rolling)&&
                     <Button 
+                        className="keep-score"
                         disabled={this.props.G.canHold.length==0} 
                         onClick={()=>this.pass()}>
                         Keep Score
                     </Button> || null}
-                {(((this.props.G.canHold.length == 0) && this.props.G.dice[0]!==0) && !this.rolledDoubles()&& !this.state.rolling) && 
-                    <Button onClick={()=>this.pass()}>end turn</Button> || 
-                    <Button disabled={this.state.rolling} onClick={()=>this.roll()}>roll</Button>
+                {((((this.props.G.canHold||[]).length == 0) && this.props.G.dice[0]!==0) && !this.rolledDoubles()&& !this.state.rolling) && 
+                    <Button className="end-turn" onClick={()=>this.pass()}>end turn</Button> || 
+                    <Button className="roll" disabled={this.state.rolling} onClick={()=>this.roll()}>roll</Button>
                 }
-                <div style={{flex: 1, flexDirection: 'row', maxWidth: 500, textAlign: 'center',justifyContent: 'flex-start',display: 'flex'}}>
+                <div className="dice" style={{flex: 1, flexDirection: 'row', maxWidth: 500, textAlign: 'center',justifyContent: 'flex-start',display: 'flex'}}>
                 {this.props && this.props.G && this.props.G.dice &&
                     this.props.G.dice.map((die, idx)=>(
-                        <Die key={`${idx}${die}`} die={die} ctx={this.props.ctx} G={this.props.G} onClick={()=>this.hold(die)} />
+                        <Die className={`die-${die}`}  key={`${idx}${die}`} die={die} ctx={this.props.ctx} G={this.props.G} onClick={()=>this.hold(die)} />
                     ))
                 }
                 </div>
+</div>
             </div>
         )
     }

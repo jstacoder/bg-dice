@@ -9,7 +9,7 @@ class App extends Component {
     super(...props)
   }
   render() {
-    const GameClient = Client({game, board: Board})
+    const GameClient = Client({game, board: Board, debug: false})
     return (
       <GameClient />
     )
