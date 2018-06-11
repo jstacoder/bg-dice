@@ -1,16 +1,31 @@
 import { scoreRoll } from './scoring/score-roll'
 
+export const getHighestScore = (G, ctx)=>{ 
+  let winner = {score:0, playerNum:0};
+  
+  for(let playerNum in G.players){
+    const playerScore = G.players[playerNum]
+    if(playerScore>winner.score){
+      winner = { score: playerScore, playerNum}
+    }
+  }
+  return winner.playerNum
+  // Object.keys(G.players).reduce(
+  //   (prev,curr)=>{
+  //     const c = G.players[curr]
+  //     return c > G.players[prev] ? curr : prev
+  //   },0
+  // )
+}
+
+export const getNextPlayer = (ctx, num) =>{
+  const { currentPlayer, playOrder } = ctx
+  return ((num||currentPlayer)+1) % playOrder.length
+}
+
 export const endGameIf = (G, ctx)=> {
-    if(
-        G.finalRound&&
-        Object.keys(G.players).length-1==
-        ctx.currentPlayer
-    ){
-        return Object.keys(G.players).reduce((prev,curr)=>
-        {
-            const c = G.players[curr]
-            return c > G.players[prev] ? curr : prev
-        },0)
+    if(G.finalRound && G.ending && G.finalRoundPlayer==getNextPlayer(ctx)){
+      return getHighestScore(G, ctx)
     }
 }
 
@@ -67,13 +82,17 @@ export const resetG = (G, {numPlayers}) =>{
 
   return {
     canHold: [],
+    finalRound: false,
+    highestScore:0,
     turnStats: resetTurnStats(),
     turnScores: resetTurnScore(),
     diceHeldThisRoll: [],
     holding: [],
+    ending:false,
     pass: false,
     dice: Array(6).fill(0),
     heldThisPhase: false,
+    initialRoll:true,
     players:loadPlayers(numPlayers)
   }
 }

@@ -1,8 +1,15 @@
 import React, { Component } from 'react'
+import { 
+    ListGroup, ListGroupItem, Container, 
+    Row, Col as Column, Badge, Button, 
+} from 'reactstrap'
 
 import Die from './Die'
+import { getHighestScore } from './utils';
+// import { Container, Row, Column } from './boot-strap'
 
-const Button = props => <button className="btn btn-default" {...props} />
+
+// const Button = props => <button className="btn btn-default" {...props} />
 
 export default class Board extends Component{
     constructor(...props){
@@ -10,6 +17,24 @@ export default class Board extends Component{
         this.state = {
             rolling: false
         }
+    }
+    disableRoll = () =>{
+        const { G, ctx, ...rest} = this.props
+        console.log(G)
+        console.log(ctx)
+        console.log(rest)
+
+        let disable = false
+        if(this.state.rolling){
+            disable = true
+        }
+        else if(!this.props.G.heldThisPhase&&!this.props.G.initialRoll){
+            disable = true
+        }
+        if(disable && !this.state.rolling){
+            return !this.rolledDoubles()
+        }
+        return disable
     }
     roll = () =>{
         console.log(this.props.G)
@@ -25,8 +50,11 @@ export default class Board extends Component{
             this.setState({rolling: false})
         }, 1200)
     }
+    reset = () =>{
+        this.props.reset()
+    }
     hold = die =>{
-        if(this.props.G.canHold.indexOf(die)>-1){
+        if((this.props.G.canHold||[]).indexOf(die)> -1){
             this.props.moves.hold(die)
         }
     }
@@ -36,6 +64,7 @@ export default class Board extends Component{
             console.log('saving ', tmpScore)
             this.props.moves.saveScore(tmpScore)
         }
+        this.props.moves.setEnding()
         this.props.events.endTurn()
     }
     getHeldScore = () =>{
@@ -46,6 +75,12 @@ export default class Board extends Component{
     }
     getScore = player =>{
         return this.props.G.players && this.props.G.players[player]+this.getTempScore()||0
+    }
+    undo = () =>{
+        this.props.events.undo()
+    }
+    redo = () =>{
+        this.props.events.redo()
     }
     canRoll = () =>{
         return !this.props.G.heldThisPhase || this.props.G.canHold.length > 0
@@ -58,10 +93,29 @@ export default class Board extends Component{
         const [die1, die2] = dice
         return die1 === die2
     }
+    reset = () =>{}
     render(){
+        const disabled = this.disableRoll()
+
+
+        const keepScoreStyle = {
+            marginBottom: 10,
+            marginTop: 10,
+            visibility: (this.getScore(this.props.ctx.currentPlayer)>=1000 && this.props.G.dice.length>0 && this.props.G.heldThisPhase) ? 'visible' : 'hidden'
+        }
         return (
+
+          <Container>
+            <Row>
+                    <Column xs={"12"} sm={"12"} md={{size: 10, offset: 1}} lg={{size: 8, offset: 2}}>
+        {this.props.ctx.gameover && (
             <div>
-            <div className="Board" style={{padding: 50}}>
+                <div>winner player: {(this.props.ctx.gameover*1)+1}</div>
+                <Button color="danger" onClick={()=>this.props.reset()}> play again</Button>
+            </div>
+        ) || (
+            <div style={{padding: 50}}>
+                {this.props.G.finalRound && <div ><h2>final round</h2><p>{(this.props.G.finalRoundPlayer*1)+1} is winning</p></div>||<p>{(this.props.G.highestScore*1)+1}</p> }
                 <p className="lead">
                     current player is {' '}
                         <span className="small">player#{' '}
@@ -73,29 +127,53 @@ export default class Board extends Component{
                 <p>
                     running score:  { this.getScore(this.props.ctx.currentPlayer) }
                 </p>
+                <Row>
+                    <Column xs={"6"}>
+                        <Button outline onClick={this.undo}>undo</Button>
+                    </Column>
+                    <Column xs={"6"}>
+                        <Button outline onClick={this.redo}>redo</Button>
+                    </Column>
+                </Row>
+                <ListGroup>
                 {Object.keys(this.props.G.players||{}).map((o,i)=>{
-                    return <p key={i}>Player# {i+1}: {this.props.G.players[i]}</p>
+                    const active = i == this.props.ctx.currentPlayer
+                    return <ListGroupItem active={active}  key={i}><p>Player# {i+1}: <Badge pill className="float-right">{this.props.G.players[i]}</Badge></p></ListGroupItem>
                 })}
-                {(this.getScore(this.props.ctx.currentPlayer)>=1000 && (this.props.G.dice||[]).length>0 && this.props.G.heldThisPhase && !this.state.rolling)&&
+                </ListGroup>
+                <Row>
+                {((((this.props.G.canHold||[]).length == 0) && this.props.G.dice[0]!==0) && !this.rolledDoubles()&& !this.state.rolling) && 
+                (<Column xs={"12"} md={"12"}>
+                <Button block outline color="danger" style={{marginTop: 15, marginBottom: 5}} onClick={()=>this.pass()}>end turn</Button> </Column>)|| 
+                    (<Column xs={"12"} md={"12"}><Button style={{marginTop: 15, marginBottom: 5}} block disabled={disabled} onClick={()=>this.roll()}>roll</Button>
+                    </Column>)
+                }
+                <Column xs={"12"} md={"12"}>
                     <Button 
-                        className="keep-score"
-                        disabled={this.props.G.canHold.length==0} 
+                        style={keepScoreStyle}
+                        block
+                        color="primary"
+                        outline
+                        disabled={this.props.G.canHold.length==0||this.state.rolling} 
                         onClick={()=>this.pass()}>
                         Keep Score
-                    </Button> || null}
-                {((((this.props.G.canHold||[]).length == 0) && this.props.G.dice[0]!==0) && !this.rolledDoubles()&& !this.state.rolling) && 
-                    <Button className="end-turn" onClick={()=>this.pass()}>end turn</Button> || 
-                    <Button className="roll" disabled={this.state.rolling} onClick={()=>this.roll()}>roll</Button>
-                }
-                <div className="dice" style={{flex: 1, flexDirection: 'row', maxWidth: 500, textAlign: 'center',justifyContent: 'flex-start',display: 'flex'}}>
+                    </Button></Column> 
+                </Row>
+                <Row>
+                    <Column xs="12">
+                <div style={{flex: 1, flexDirection: 'row', textAlign: 'center',justifyContent: 'flex-start',display: 'flex'}}>
                 {this.props && this.props.G && this.props.G.dice &&
                     this.props.G.dice.map((die, idx)=>(
-                        <Die className={`die-${die}`}  key={`${idx}${die}`} die={die} ctx={this.props.ctx} G={this.props.G} onClick={()=>this.hold(die)} />
+                        <Die key={`${idx}${die}`} die={die} rolling={this.state.rolling} ctx={this.props.ctx} G={this.props.G} onClick={()=>this.hold(die)} />
                     ))
                 }
                 </div>
-</div>
-            </div>
+                </Column>
+                </Row>
+            </div>)}
+            </Column>
+            </Row>
+            </Container>
         )
     }
 }
