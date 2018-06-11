@@ -3,8 +3,8 @@ language: node
 
 install:
   - step: !ShellCommand
-        - "npm install"
-        - timeout: none
+        command: "npm install"
+        timeout: none
 
 script:
     - cmd: gulp build
