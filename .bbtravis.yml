@@ -1,9 +1,9 @@
-language: python
+language: node
 
 install:
-    - npm install
+    - step: !ShellCommand
+      timeout: none
+      command: npm install
 
 script:
-    - step: ShellCommand
-      command: gulp build
-      name: test
+    - cmd: gulp build
