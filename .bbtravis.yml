@@ -4,6 +4,4 @@ install:
     - npm install
 
 script:
-    - step: ShellCommand
-      command: gulp build
-      name: test
+    - gulp build
